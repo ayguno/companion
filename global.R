@@ -112,3 +112,61 @@ queryEvents <- function(drug,start.date,end.date){
         
         return(events.list)
 }
+
+##########################################################################
+# Write a systematic function that compiles relevant device information:
+##########################################################################
+        #                       a. it checks the current drug selected
+        #                       b. finds the right companion diagnostic(s) associated with the drug
+        #                       c. searches data associated with the device(s) from openFDA
+        #                       d. returns a data.frame with relevant data
+        #                       e. this function should be able to let json errors go and also return a FLAG if no information is found in API query
+
+queryDeviceData <- function(drug,
+                            start.date = "1998-01-01", 
+                            end.date = as.character(Sys.Date()),
+                            drug.device.table = readRDS("drug.device.table.rds")){
+        
+        companions <- unique(drug.device.table$Device.Trade.Name[which(drug.device.table$Drug.Trade.Name == tolower(drug))])
+        
+        device.event.data <- data.frame(device = "",
+                                        date_of_event = "",
+                                        event_type = "",
+                                        event_location ="",
+                                        event_description = "")
+        
+        for(i in seq_along(companions)){
+                
+                is.this.error <- try(device.event.query <- fromJSON(paste0('https://api.fda.gov/device/event.json?search=device.brand_name:',companions[i],'&limit=100'))$results)
+                
+                
+                if(is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 400.\n'){
+                        event.text.vector <- sapply((sapply(device.event.query$mdr_text,function(x) return(x$text))),function(x) return(x[1]))
+                        temp <- data.frame(device = companions[i],
+                                           date_of_event = device.event.query$date_of_event,
+                                           event_type = device.event.query$event_type,
+                                           event_location = device.event.query$event_location,
+                                           event_description = event.text.vector)
+                        
+                        device.event.data <- rbind(device.event.data,temp) 
+                        
+                }       
+                
+        }
+        
+        if((nrow(device.event.data) == 1)){
+                
+                return(FALSE) # This means error! :this function should be able to let json errors go and also return a FLAG if no information is found in API query
+        }else{
+                device.event.data <- device.event.data[-1,] # remove the first row
+                
+                # Convert all features to chr:
+                for(j in 1:ncol(device.event.data)){
+                        device.event.data[,j] <- as.character(device.event.data[,j])
+                }
+        
+                 
+                return(device.event.data)
+        }
+        
+} # End of queryDeviceData
