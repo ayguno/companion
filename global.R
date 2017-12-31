@@ -140,7 +140,7 @@ queryDeviceData <- function(drug,
                 is.this.error <- try(device.event.query <- fromJSON(paste0('https://api.fda.gov/device/event.json?search=device.brand_name:',companions[i],'&limit=100'))$results)
                 
                 
-                if(is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 400.\n'){
+                if((is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 400.\n')&(is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 404.\n')){
                         event.text.vector <- sapply((sapply(device.event.query$mdr_text,function(x) return(x$text))),function(x) return(x[1]))
                         temp <- data.frame(device = companions[i],
                                            date_of_event = device.event.query$date_of_event,
@@ -156,7 +156,7 @@ queryDeviceData <- function(drug,
         
         if((nrow(device.event.data) == 1)){
                 
-                return(FALSE) # This means error! :this function should be able to let json errors go and also return a FLAG if no information is found in API query
+                return(NULL) # This means error! :this function should be able to let json errors go and also return a FLAG if no information is found in API query
         }else{
                 device.event.data <- device.event.data[-1,] # remove the first row
                 

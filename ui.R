@@ -176,7 +176,8 @@ shinyUI( dashboardPage( skin = "purple",
 
                     box(width= 12,title = "Summary of Drug and Device Adverse Events",
                         status = "primary",solidHeader = TRUE,
-                        htmlOutput("PRRplotERROR"),
+                        
+                        column(1,{}),htmlOutput("PRRplotERROR"),
                         plotlyOutput("PPRplot")
                     
                     ),
