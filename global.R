@@ -38,6 +38,7 @@ event.list <- readRDS("Herceptin.events.list.rds")
 initial.drug <- "Herceptin"
 
 state.frame <- data.frame(state.abb,state.name)
+states_map <- map_data("state")
 ###################
 # Global Functions
 ###################
@@ -258,9 +259,9 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 ##############################################################################
 
 get.state.510k <- function(x){
-        
-        is.this.error <- try(query.510k.state <- fromJSON("https://api.fda.gov/device/510k.json?count=state")$results)      
-        
+
+        is.this.error <- try(query.510k.state <- fromJSON("https://api.fda.gov/device/510k.json?count=state")$results)
+
         if((is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 400.\n')&(is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 404.\n')){
                 query.510k.state$term <- toupper(query.510k.state$term)
                 query.510k.state <- merge(query.510k.state,state.frame, by.x = "term", by.y = "state.abb", all = FALSE)
@@ -279,9 +280,9 @@ get.state.510k <- function(x){
 
 
 get.state.PMA <- function(x){
-        
-        is.this.error <- try(query.PMA.state <- fromJSON("https://api.fda.gov/device/PMA.json?count=state")$results)      
-        
+
+        is.this.error <- try(query.PMA.state <- fromJSON("https://api.fda.gov/device/PMA.json?count=state")$results)
+
         if((is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 400.\n')&(is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 404.\n')){
                 query.PMA.state$term <- toupper(query.PMA.state$term)
                 query.PMA.state <- merge(query.PMA.state,state.frame, by.x = "term", by.y = "state.abb", all = FALSE)
@@ -294,37 +295,37 @@ get.state.PMA <- function(x){
 }
 
 ##############################################################################
-# get.state.PMA.companion: gets state counts for all PMA submissions for companion Dx received to date 
+# get.state.PMA.companion: gets state counts for all PMA submissions for companion Dx received to date
 ##############################################################################
 
 
 get.state.PMA.companion <- function(x){
-        
+
         require(dplyr)
-        
+
         # Get PMA numbers from our cleaned list:
         PMA.numbers <- unname(sapply(tolower(readRDS("drug.device.table.rds")$PMA),substring,1,7))
-        
+
         query.PMA.state.companion <- data.frame(term = "",
                                                 count= "",
                                                 state.name = "", stringsAsFactors = FALSE)
-        
+
         for(i in seq_along(PMA.numbers)){
-        is.this.error <- try(query.PMA.state <- fromJSON(paste0('https://api.fda.gov/device/PMA.json?search=',PMA.numbers[i],'&count=state'))$results)      
-        
+        is.this.error <- try(query.PMA.state <- fromJSON(paste0('https://api.fda.gov/device/PMA.json?search=',PMA.numbers[i],'&count=state'))$results)
+
         if((is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 400.\n')&(is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 404.\n')){
-                
+
                 query.PMA.state$term <- toupper(query.PMA.state$term)
                 query.PMA.state <- merge(query.PMA.state,state.frame, by.x = "term", by.y = "state.abb", all = FALSE)
                 query.PMA.state$state.name <- tolower(query.PMA.state$state.name)
                 query.PMA.state.companion <- rbind(query.PMA.state.companion,query.PMA.state)
                 }
-       
+
         }
         query.PMA.state.companion <- query.PMA.state.companion[-1,]
         query.PMA.state.companion$count <- as.numeric(query.PMA.state.companion$count)
         query.PMA.state.companion.summary <-  query.PMA.state.companion %>% group_by(state.name) %>% summarise(count = sum(count))
-        
+
         return(query.PMA.state.companion.summary)
 }
 
@@ -335,30 +336,3 @@ get.state.PMA.companion <- function(x){
 
 
 
-PMA.data <- get.state.PMA.companion()
-
-us <- map_data("state") # convert state spatial data into a ggplot map_data
-# note that this contains 49 states, the matching data above has to be filtered to present only these 49 states (therefore the filtering: statename %in% levels(factor(us$region))))
-
-gg <- ggplot() # make an empty plot
-
-# first add the us map_data as the plain U.S. map frame
-template <- gg + geom_map(data = us,map = us, aes(x = long, y = lat, 
-                                                  map_id = region ),fill = "#ffffff", color = "#ffffff", size = 0.15)
-
-A <- template + geom_map (data = PMA.data, map = us,
-                          aes(fill = count, map_id = state.name),
-                          color="#ffffff", size = 0.3) +
-        scale_fill_continuous(low='thistle2', high='darkred', 
-                              guide='colorbar', name = "Number of\nfatalities")
-
-# Polish the plot
-A <- A + labs(x=NULL, y=NULL,
-              title = "(A) Distribution of fatalities caused by tornadoes
-across the United States")+
-        coord_map("albers", lat0 = 39, lat1 = 45)+ 
-        theme(panel.border = element_blank())+
-        theme(panel.background = element_blank())+
-        theme(axis.ticks = element_blank())+
-        theme(axis.text = element_blank())+
-        theme(title = element_text(face = "bold",size = 8))  

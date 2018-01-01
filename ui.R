@@ -35,6 +35,7 @@ shinyUI( dashboardPage( skin = "purple",
                         
                         ),
                 
+                menuItem("Visualize PMAs and 510(k)s",tabName = "industry",icon = icon("thumbs-o-up")),
                 hr(),
 
                 menuItem("Get the Sourcecode", icon = icon("github"), tabName = "sourcecode"),
@@ -170,7 +171,7 @@ shinyUI( dashboardPage( skin = "purple",
                 ),  
                     
                 ######################    
-                # First tab content
+                # First tab content:yearlysummary
                 ######################
                 tabItem(tabName = "yearlysummary",class= "active",
 
@@ -207,10 +208,31 @@ shinyUI( dashboardPage( skin = "purple",
                                 
                                 )     
                        
-                )
+                ),# End of yearlysummary tab
                 
+                ######################    
+                # Second tab content: industry
+                ######################
+                tabItem(tabName = "industry",class= "active",
                
-                  
+                        box(width= 6,title = "Distribution of all PMA submissions to date",
+                            status = "primary",solidHeader = TRUE, 
+                            
+                            plotlyOutput("allPMA", height = "300px")
+                        ),
+                        box(width= 6,title = "Distribution of all 510(k) submissions to date",
+                            status = "primary",solidHeader = TRUE,
+                            
+                            plotlyOutput("all510k", height = "300px")
+                        ),
+                        box(width= 6,title = "Distribution of all companion Dx PMA submissions to date",
+                            status = "primary",solidHeader = TRUE,
+                            
+                            plotlyOutput("companionPMA", height = "300px")
+                        )
+                        
+                )# End of industry tab
+                
             )# End of tabItems structure      
         )  # End of dashboard body
         
