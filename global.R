@@ -138,7 +138,7 @@ queryDeviceData <- function(drug,
         
         for(i in seq_along(companions)){
                 
-                is.this.error <- try(device.event.query <- fromJSON(paste0('https://api.fda.gov/device/event.json?search=device.brand_name:',companions[i],'&limit=100'))$results)
+                is.this.error <- try(device.event.query <- fromJSON(paste0('https://api.fda.gov/device/event.json?search=device.brand_name:"',gsub(" ","+",companions[i]),'"&limit=100'))$results)
                 
                 
                 if((is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 400.\n')&(is.this.error != 'Error in open.connection(con, \"rb\") : HTTP error 404.\n')){
@@ -154,6 +154,8 @@ queryDeviceData <- function(drug,
                                 temp[,j] <- as.character(temp[,j])
                         }
                         
+                        #Get complete cases in terms of date
+                        temp <- temp[!is.na(temp$date_of_event),]
                         
                         # Convert the date feature to proper date
                         for(k in 1:nrow(temp)){

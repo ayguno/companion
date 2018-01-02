@@ -23,14 +23,14 @@ shinyUI( dashboardPage( skin = "purple",
         dashboardSidebar(width = 330,
             sidebarMenu(id="tabitems",  
                 hr(color = "blue"),
-                menuItem("Welcome!",tabName = "welcome",icon = icon("thumbs-o-up"),badgeLabel = "start here",badgeColor = "blue"),
+                menuItem("Welcome!",tabName = "welcome",icon = icon("thumbs-o-up"),badgeLabel = "start here",badgeColor = "navy"),
                 menuItem("Yearly Drug-Device Data", tabName = "yearlysummary", icon = icon("bar-chart"),
                 
                         menuSubItem("Click here to start analysis!",tabName = "yearlysummary", selected =NULL),
                                 selectInput("drugs", label = "Select a drug",choices = drug.list , selected = "herceptin"),
                                 selectInput("events", label = "Select a drug adverse effect",choices = event.list , selected = event.list[3]),
                                 checkboxInput("device.checkbox","Add Companion Dx Data?"),
-                                dateRangeInput("date.range", label = "Select a date range", start = "1998-01-01", end = as.character(Sys.Date()))
+                                dateRangeInput("date.range", label = "Select a date range", start = "1998-01-01", end = as.character(Sys.Date())), br()
                 
                         
                         ),
@@ -47,7 +47,55 @@ shinyUI( dashboardPage( skin = "purple",
         ), #End of dashboardSidebar
         
         dashboardBody(
-                tags$head(
+                
+                tags$head(tags$style(HTML('.shiny-notification {
+                                              background-color:#360160;
+                                              color: #fff;
+                                              font-size: 15pt;
+                                              height: 100px;
+                                              width: 700px;
+                                              position:fixed;
+                                              top: calc(50% - 50px);;
+                                              left: calc(60% - 400px);;
+                                            }
+                                          .content-wrapper{
+                                          background: #5e0ca0;
+                                          }
+                                          .skin-purple .main-header .navbar-static-top{
+                                          background-color: #8710bc;
+                                          }
+                                          .box.box-solid.box-primary>.box-header {
+                                          color: #fff;
+                                          background: #5e0ca0
+                                          }
+                                          .box.box-solid.box-primary{
+                                          border-bottom-color: #fff;
+                                          border-left-color: #fff;
+                                          border-right-color: #fff;
+                                          border-top-color: #fff;
+                                          color: #fff;
+                                          background-color: #5e0ca0;
+                                          }
+                                          .skin-purple .main-header .logo{
+                                          background-color: #8710bc;
+                                          }
+                                          .skin-purple .main-sidebar {
+                                          background-color: #5e0ca0;
+                                          color:#fff
+                                          }
+                                          .skin-purple .sidebar-menu>li.active>a, .skin-purple .sidebar-menu>li:hover>a {
+                                          background-color: #1fd30e;
+                                          }
+                                          .skin-purple .main-sidebar {
+                                          font-size: 13pt;
+                                          }
+                                          .skin-purple .main-sidebar .sidebar .sidebar-menu .treeview-menu {
+                                          background-color: #8710bc;
+                                          }                
+                                          @import url("//fonts.googleapis.com/css?family=Lobster|Cabin:400,700");
+                                          }
+                                          ')),
+                
                         tags$script(
                                 HTML("
                                      window.onload = function() {
@@ -62,113 +110,50 @@ shinyUI( dashboardPage( skin = "purple",
                                      function resize(){
                                      var h = window.innerHeight - $('.navbar').height() - 150; // Get dashboardBody height
                                      $('#box').height(h); 
-                                     }"
-                                        )
+                                     }
+                                     "
+                                    )
+                                
+                                
                                 )
-                                ),
+                           ),
                 tabItems(
                 
           
                   #Welcome-tab content  
                   tabItem(tabName = "welcome",class = "active",
-                   fluidRow( 
-                    
-                   ),
+                    column(4,{}),
+                           h1("Welcome to Companion!", 
+                              style = "font-family: 'Lobster', cursive;
+                             font-weight: 500; line-height: 1.1; 
+                             color: #fff;"),
+                    column(4,{}),
                   
-                   
+                   br(),
                    box(title = "Welcome to Companion!",
-                   width = 12,solidHeader = TRUE,status ="primary",background = "purple",
+                   width = 12,solidHeader = T,status ="primary",
 
                    h4("Use data analytics to monitor adverse effects associated with anti-cancer drugs and companion diagnostics"),
-                   tags$hr(),
+                   tags$hr()
                   
-                   h5(icon("thumbs-o-up"),"Mass Spectrometry users inject
-                      1 ug tryptic Jurkat cell peptide mixture to instruments and run a 110 min 
-                      gradient with a standardized LC-MS/MS run method.",br(),br(),
-                      icon("thumbs-o-up"),"This provides an objective quality control
-                      that helps to monitor instrument performance by using powerful
-                      Quality Metrics provided by Spectrum Mill.",br(),br(),
-                      icon("thumbs-o-up"),"JurkatQC Scraper actively monitors 
-                      Broad Proteomics servers to detect new Jurkat Quality Metrics,
-                      provided that the raw files were searched in Spectrum Mill.",br(),br(),
-                      icon("thumbs-o-up"),"JurkatQC Scraper archives Quality Metrics data,
-                      extracts useful LC labels, time and user attributes, and present helpful data analytics.",br(),br(),
-                      icon("thumbs-o-up"),"JurkatQC Scraper also provides a user interface to obtain, store and present
-                      mass spectrometry user comments and maintanence records.",br(),br(),
-                      icon("thumbs-o-up"),"Effective from Version 0.1.0, JurkatQC Scraper also monitors
-                      instrument active archive records to estimate Mass Spectrometer downtime. It also integrates
-                      the instruments' operational status with Jurkat QC quality metrics."),
+                   # h5(icon("thumbs-o-up"),"Mass Spectrometry users inject
+                   #    1 ug tryptic Jurkat cell peptide mixture to instruments and run a 110 min 
+                   #    gradient with a standardized LC-MS/MS run method.",br(),br(),
+                   #    icon("thumbs-o-up"),"This provides an objective quality control
+                   #    that helps to monitor instrument performance by using powerful
+                   #    Quality Metrics provided by Spectrum Mill.",br(),br(),
+                   #    icon("thumbs-o-up"),"JurkatQC Scraper actively monitors 
+                   #    Broad Proteomics servers to detect new Jurkat Quality Metrics,
+                   #    provided that the raw files were searched in Spectrum Mill.",br(),br(),
+                   #    icon("thumbs-o-up"),"JurkatQC Scraper archives Quality Metrics data,
+                   #    extracts useful LC labels, time and user attributes, and present helpful data analytics.",br(),br(),
+                   #    icon("thumbs-o-up"),"JurkatQC Scraper also provides a user interface to obtain, store and present
+                   #    mass spectrometry user comments and maintanence records.",br(),br(),
+                   #    icon("thumbs-o-up"),"Effective from Version 0.1.0, JurkatQC Scraper also monitors
+                   #    instrument active archive records to estimate Mass Spectrometer downtime. It also integrates
+                   #    the instruments' operational status with Jurkat QC quality metrics."))
                   
-                   
-                   
-                   fluidRow(
-                   
-                   column(1,{}),                      
-                        
-                   actionLink("link_to_downtime",
-                              label = uiOutput("downtime_box"),width = 3),
-                      
-                   infoBox(title="Sourcecode",color = "purple",width = 4,
-                            icon = icon("github"), value = "Find us on GitHub!",subtitle = "Access the sourcecode",
-                            href = "https://github.com/ayguno/JurkatQCScraper"),
-                   
-                   actionLink("link_to_tutorial",
-                              label = uiOutput("tutorial_box"),width = 3),
-                   
-                   column(1,{}) 
-                   
-                   )
-                   
-                   
-                   
-                   
-                   ),
-
-                   
-                   box(title = "Choose an app to explore the latest Jurkat QC data
-                       generated by the mass spectrometers in the Broad Proteomics Platform",
-                   width = 12,solidHeader = TRUE, status = "danger",
-                   background = "navy",
-                   
-                   fluidRow(
-                   
-                   # Generating dynamic InfoBoxes as action links
-                   actionLink("link_to_QC_summary",
-                              label = uiOutput("QC_summary_box"),width =4),
-                   actionLink("link_to_timeseries",
-                              label = uiOutput("timeseries_box"),width =4),
-                   actionLink("link_to_current",
-                              label = uiOutput("current_box"),width =4)
-                   
-                   ),
-                   
-                   fluidRow(
-                           
-                           # Generating dynamic InfoBoxes as action links
-                           actionLink("link_to_thelatest",
-                                      label = uiOutput("thelatest_box"),width =4),
-                           actionLink("link_to_facts",
-                                      label = uiOutput("facts_box"),width =4),
-                           actionLink("link_to_instrument_centric",
-                                      label = uiOutput("instrument_centric_box"),width =4)
-                           
-                   ),
-                   
-                   fluidRow(
-                           column(2,{}),
-                           actionLink("link_to_thelatest2",
-                                      label = uiOutput("comment_box"),width =3),
-                           actionLink("link_to_support",
-                                      label = uiOutput("support_box"),width =2)
-                   )
-                   
-
-                   
-                   )
-                   
-                          
-                   
-                ),  
+                )),  
                     
                 ######################    
                 # First tab content:yearlysummary
@@ -178,7 +163,7 @@ shinyUI( dashboardPage( skin = "purple",
                     box(width= 12,title = "Summary of Drug and Device Adverse Events",
                         status = "primary",solidHeader = TRUE,
                         
-                        column(1,{}),htmlOutput("PRRplotERROR"),
+                        column(1,{}),htmlOutput("PRRplotERROR"), br(),
                         plotlyOutput("PPRplot")
                     
                     ),
@@ -218,17 +203,17 @@ shinyUI( dashboardPage( skin = "purple",
                         box(width= 6,title = "Distribution of all PMA submissions to date",
                             status = "primary",solidHeader = TRUE, 
                             
-                            plotlyOutput("allPMA", height = "300px")
+                            plotlyOutput("allPMA", height = "250px")
                         ),
                         box(width= 6,title = "Distribution of all 510(k) submissions to date",
                             status = "primary",solidHeader = TRUE,
                             
-                            plotlyOutput("all510k", height = "300px")
+                            plotlyOutput("all510k", height = "250px")
                         ),
-                        box(width= 6,title = "Distribution of all companion Dx PMA submissions to date",
+                        box(width= 6,title = "Distribution of companion Dx PMA submissions to date",
                             status = "primary",solidHeader = TRUE,
                             
-                            plotlyOutput("companionPMA", height = "300px")
+                            plotlyOutput("companionPMA", height = "250px")
                         )
                         
                 )# End of industry tab
