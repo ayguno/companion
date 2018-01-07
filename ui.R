@@ -20,7 +20,7 @@ shinyUI( dashboardPage( skin = "purple",
        
                
        
-        dashboardSidebar(width = 330,
+        dashboardSidebar(width = 300,
             sidebarMenu(id="tabitems",  
                 hr(color = "blue"),
                 menuItem("Welcome!",tabName = "welcome",icon = icon("thumbs-o-up"),badgeLabel = "start here",badgeColor = "navy"),
@@ -38,8 +38,8 @@ shinyUI( dashboardPage( skin = "purple",
                 menuItem("Visualize PMAs and 510(k)s",tabName = "industry",icon = icon("thumbs-o-up")),
                 hr(),
 
-                menuItem("Get the Sourcecode", icon = icon("github"), tabName = "sourcecode"),
-                menuItem("Support and bug reports",icon=icon("medkit"),tabName = "support"),
+                menuItem("Get the Sourcecode", icon = icon("github"), href = "https://github.com/ayguno"),
+                menuItem("Data source API",icon=icon("medkit"), href = "https://open.fda.gov/drug/event/reference/"),
             
                 hr()
                          
@@ -60,6 +60,7 @@ shinyUI( dashboardPage( skin = "purple",
                                             }
                                           .content-wrapper{
                                           background: #5e0ca0;
+                                          
                                           }
                                           .skin-purple .main-header .navbar-static-top{
                                           background-color: #8710bc;
@@ -69,10 +70,10 @@ shinyUI( dashboardPage( skin = "purple",
                                           background: #5e0ca0
                                           }
                                           .box.box-solid.box-primary{
-                                          border-bottom-color: #fff;
-                                          border-left-color: #fff;
-                                          border-right-color: #fff;
-                                          border-top-color: #fff;
+                                          border-bottom-color: #1fd30e;
+                                          border-left-color: #1fd30e;
+                                          border-right-color: #1fd30e;
+                                          border-top-color: #1fd30e;
                                           color: #fff;
                                           background-color: #5e0ca0;
                                           }
@@ -122,39 +123,39 @@ shinyUI( dashboardPage( skin = "purple",
           
                   #Welcome-tab content  
                   tabItem(tabName = "welcome",class = "active",
-                    column(4,{}),
-                           h1("Welcome to Companion!", 
-                              style = "font-family: 'Lobster', cursive;
-                             font-weight: 500; line-height: 1.1; 
-                             color: #fff;"),
-                    column(4,{}),
+                    # column(4,{}),
+                    #        h1("Welcome to Companion!", 
+                    #           style = "font-family: 'Lobster', cursive;
+                    #          font-weight: 500; line-height: 1.1; 
+                    #          color: #fff;"),
+                    #column(4,{}),
                   
-                   br(),
-                   box(title = "Welcome to Companion!",
-                   width = 12,solidHeader = T,status ="primary",
-
-                   h4("Use data analytics to monitor adverse effects associated with anti-cancer drugs and companion diagnostics"),
-                   tags$hr()
-                  
-                   # h5(icon("thumbs-o-up"),"Mass Spectrometry users inject
-                   #    1 ug tryptic Jurkat cell peptide mixture to instruments and run a 110 min 
-                   #    gradient with a standardized LC-MS/MS run method.",br(),br(),
-                   #    icon("thumbs-o-up"),"This provides an objective quality control
-                   #    that helps to monitor instrument performance by using powerful
-                   #    Quality Metrics provided by Spectrum Mill.",br(),br(),
-                   #    icon("thumbs-o-up"),"JurkatQC Scraper actively monitors 
-                   #    Broad Proteomics servers to detect new Jurkat Quality Metrics,
-                   #    provided that the raw files were searched in Spectrum Mill.",br(),br(),
-                   #    icon("thumbs-o-up"),"JurkatQC Scraper archives Quality Metrics data,
-                   #    extracts useful LC labels, time and user attributes, and present helpful data analytics.",br(),br(),
-                   #    icon("thumbs-o-up"),"JurkatQC Scraper also provides a user interface to obtain, store and present
-                   #    mass spectrometry user comments and maintanence records.",br(),br(),
-                   #    icon("thumbs-o-up"),"Effective from Version 0.1.0, JurkatQC Scraper also monitors
-                   #    instrument active archive records to estimate Mass Spectrometer downtime. It also integrates
-                   #    the instruments' operational status with Jurkat QC quality metrics."))
-                  
-                )),  
-                    
+                   #br(),
+                   
+                   #column(2,{}),
+                   # box(#title = "Use data analytics to monitor adverse effects associated with selected anti-cancer drugs and their companion diagnostics",
+                   #  width = 8,solidHeader = T,status ="primary",
+                   # column(1,{}),
+                   # h5("Use data analytics to monitor adverse effects associated with 
+                   #    selected anti-cancer drugs and their companion diagnostics",
+                   #    style = "color: #fff;"),
+                   fluidRow(
+                   column(6,{}),
+                   tags$img(src='workflow.jpg', height = 500, width = 640 ),
+                   column(2,{})
+                   ),
+                #),
+                br(), br(),
+                box(#title = "Disclaimer: not for clinical use",
+                    width = 12,solidHeader = F,background = "purple",height = "100px",
+                    h4("Disclaimer: not for clinical use"),
+                    h5("The data presented here has not been extensively validated or verified. 
+                       Therefore, it can not be used to establish a causal relationship between a product and adverse events. 
+                       Therefore, it should not be considered as medically validated and should not be used for clinical decision making.
+                       For a full disclaimer of the data please visit the data source by following the 'data source API' link on the left.")
+                    )  
+                 
+                ),   
                 ######################    
                 # First tab content:yearlysummary
                 ######################
@@ -168,28 +169,45 @@ shinyUI( dashboardPage( skin = "purple",
                     
                     ),
      
-                                box(title= "Tips for using this APP" ,
-                                    width = 12,background = "navy",solidHeader = TRUE,
-                                    status = "success",
+                   box(title= "Tips for using this APP" ,
+                   width = 6,background = "navy",solidHeader = TRUE,collapsible = T,
+                   status = "success",
                                       
-                                column(6,         
-                                          h5(icon("calendar")," The data describes the daily summary of
-                                          the JurkatQC data obtained real-time.
-                                          Each parameter is described as the 'Median'
-                                          of the daily records observed for each instrument.
-                                          ", br(),br(),
-                                          icon("bar-chart")," The default view is a bar chart, which displays
-                                          the median value of the selected quality metrics for a given date.",br(),br(),
-                                          icon("sliders")," Use the sliding bar on the x-axis to change the dates.",br(),br(),
-                                          icon("gears")," Click Y-axis label to switch between different quality metrics.")#, br(),br(),
-                                        ),
+                                     
+                                          h5(icon("line-chart")," The data describes the yearly summary of
+                                          Proportional reporting ratio (PPR) calculated from data obtained real-time
+                                          from openFDA API.", br(),br(),
+                                          icon("bar-chart")," Select a drug and an adverse event to follow. Adverse events
+                                          list will be updated for a given drug selection.",br(),br(),
+                                          icon("check-square-o")," Use the checkbox to add data from companion diagnostics
+                                          associated with the drug. When clicked, this will present each adverse event
+                                          associated with a companion diagnostics that is linked to the selected drug.",br(),br(),
+                                          icon("check-square-o"),"The events are reported on the dates represented by the date axis, but they are randomly scattered
+                                          across the y-axis to improve data analysis",br(),br(),
+                                          icon("gears")," The plots are interactive: hover the data points to get information about 
+                                          the events.",br(),br(),
+                                          icon("calendar")," Use the calendar provided to restrict your analysis to specific dates. Once a new date
+                                          is specified, a new analysis will be performed using the date range you specified." )#, br(),br(),
+                                ),
                                        
-                                       column(6,
-                                          h5(icon("play")," For bar-chart only: click to play button on the x-axis to monitor changes over time in motion!",br(),br(),
-                                          icon("line-chart")," Use the chart switch on the top right to change into a line-chart summary.", br(), br(),
-                                          icon("thumbs-o-up"), " You can log transform the data by clicking top of the Y-axis.",br(),br(),
-                                          icon("check-square-o"), " You can choose to display the data for all or some of the 
-                                          instruments from the menu on the left side of the chart."))  
+                    box(title= "What is Proportional reporting ratio (PPR)?" ,
+                        width = 6,background = "navy",solidHeader = TRUE,collapsible = T,
+                        status = "success",
+                                       
+                                          h5(icon("play"),"PPR is a common metric that is used to measure 
+                                             the adverse events associated with a drug.",br(),br(),
+                                          icon("line-chart")," Essentially PRR is defined as the ratio BETWEEN the frequency of a
+                                          specific adverse event is reported for a given drug (relative to all adverse events reported for the drug in a database) 
+                                          AND the frequency with which the same adverse event is reported for ALL drugs in the comparison group (relative to all adverse events for drugs in a database).", br(), br(),
+                                          icon("thumbs-o-up"), " Mathematically, PPR is calculated as:",br(),br(),
+                                          "PRR = (m/n)/ [ (M-m)/(N-n) ]"),
+                                          column(1,{}),
+                                          column(10,{
+                                          h5( "Where:",br(),br(),
+                                          "m = number of reports with drug and event in a database",br(),
+                                          "n = number of reports reports with drug in a database",br(),
+                                          "M = number of reports with event in database",br(),
+                                          "N = number of reports in database") }) 
                                 
                                 )     
                        
@@ -210,6 +228,7 @@ shinyUI( dashboardPage( skin = "purple",
                             
                             plotlyOutput("all510k", height = "250px")
                         ),
+                        column(3,{}),
                         box(width= 6,title = "Distribution of companion Dx PMA submissions to date",
                             status = "primary",solidHeader = TRUE,
                             
